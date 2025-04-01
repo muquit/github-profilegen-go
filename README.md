@@ -57,7 +57,8 @@ go install github.com/yourusername/github-profilegen-go@latest
 
 # Download
 
-Download pre-compiled binaries for various platforms from Releases page
+Download pre-compiled binaries for various platforms from
+[Releases](https://github.com/muquit/github-profilegen-go/releases) page
 
 # Building from source
 Install [go](https://go.dev/) first
