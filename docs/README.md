@@ -32,6 +32,8 @@ Usage of ./github-profilegen-go:
 
 # Quick Start
 
+Install [go](https://go.dev/) first
+
 ```bash
 go install github.com/yourusername/github-profilegen-go@latest
 ```
@@ -41,6 +43,8 @@ go install github.com/yourusername/github-profilegen-go@latest
 Download pre-compiled binaries for various platforms from Releases page
 
 # Building from source
+Install [go](https://go.dev/) first
+
 ```bash
 git clone https://github.com/yourusername/github-profilegen-go.git
 cd github-profilegen-go
