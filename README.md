@@ -45,7 +45,7 @@ Usage of ./github-profilegen-go:
     	Path to priority list file
   -user string
     	GitHub username (required)
-```1
+```
 
 # Quick Start
 
