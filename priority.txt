@@ -1,0 +1,3 @@
+# Priority order for repositories
+# Repositories listed here will appear at the top in this order
+# One repository name per line

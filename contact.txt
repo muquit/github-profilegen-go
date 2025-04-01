@@ -1,0 +1,7 @@
+# Contact Information
+# Each line will be displayed in the Contact section
+
+🌐 Website: URL of your website
+📧 Email: Your email
+🐦 Twitter: @yourhandle
+💼 LinkedIn: https://linkedin.com/in/yourprofile
