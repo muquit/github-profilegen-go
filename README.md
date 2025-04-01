@@ -2,6 +2,7 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Synopsis](#synopsis)
+- [Version](#version)
 - [Quick Start](#quick-start)
 - [Download](#download)
 - [Building from source](#building-from-source)
@@ -46,6 +47,11 @@ Usage of ./github-profilegen-go:
   -user string
     	GitHub username (required)
 ```
+
+# Version
+The current version is 1.0.1
+
+Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
 # Quick Start
 
