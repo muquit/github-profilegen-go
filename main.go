@@ -1,10 +1,10 @@
 package main
 
 /////////////////////////////////////////////////////////////////////
-// A program to generate simgple github profile README.md
+// A program to generate simple github profile README.md
 // Developed with Claude AI 3.7 Sonnet, working under my guidance and
 // instructions.
-// muquit@muquit.com Mar-31-2025 
+// muquit@muquit.com Mar-31-2025
 /////////////////////////////////////////////////////////////////////
 
 import (
