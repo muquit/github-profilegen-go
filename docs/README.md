@@ -40,7 +40,7 @@ The current version is 1.0.2
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
 # Installation
-# Install from github
+## Install from github
 
 Install [go](https://go.dev/) first
 
