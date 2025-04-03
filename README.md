@@ -3,14 +3,16 @@
 - [Features](#features)
 - [Synopsis](#synopsis)
 - [Version](#version)
-- [Quick Start](#quick-start)
-- [Download](#download)
-- [Building from source](#building-from-source)
+- [Installation](#installation)
+- [Install from github](#install-from-github)
+  - [Download](#download)
+  - [Building from source](#building-from-source)
 - [Usage](#usage)
 - [Command-line Options](#command-line-options)
 - [Configuration Files](#configuration-files)
   - [Exclusion List (exclude.txt)](#exclusion-list-excludetxt)
   - [Priority List (priority.txt)](#priority-list-prioritytxt)
+  - [AI Credits (ai-credits.txt)](#ai-credits-ai-creditstxt)
   - [Contact Information (contact.txt)](#contact-information-contacttxt)
 - [Example Output](#example-output)
 - [License is MIT](#license-is-mit)
@@ -36,6 +38,8 @@ Please visit https://github.com/muquit/ to see how it looks like.
 # Synopsis
 ```
 Usage of ./github-profilegen-go:
+  -ai-credits string
+    	Path to AI credits file
   -contact string
     	Path to contact info file
   -exclude string
@@ -46,14 +50,17 @@ Usage of ./github-profilegen-go:
     	Path to priority list file
   -user string
     	GitHub username (required)
+  -version
+    	Show version information and exit
 ```
 
 # Version
-The current version is 1.0.1
+The current version is 1.0.2
 
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
-# Quick Start
+# Installation
+# Install from github
 
 Install [go](https://go.dev/) first
 
@@ -61,12 +68,12 @@ Install [go](https://go.dev/) first
 go install github.com/yourusername/github-profilegen-go@latest
 ```
 
-# Download
+## Download
 
 Download pre-compiled binaries for various platforms from
 [Releases](https://github.com/muquit/github-profilegen-go/releases) page
 
-# Building from source
+## Building from source
 Install [go](https://go.dev/) first
 
 ```bash
@@ -117,6 +124,19 @@ cool-library
 useful-tool
 ```
 
+## AI Credits (ai-credits.txt)
+If a project is AI assisted and if you would like to give credit, specify a
+file with the options `-ai-credits ai-credits.txt`.
+
+An Example file is shown below:
+```
+# Format: repository_name|image_path|alt_text|title_text|width|height
+go-xbuild-go|claude_assisted.svg|Claude AI Assisted|Claude AI Assisted|96|31
+cubic-ubuntu-server-fix|claude_assisted.svg|Claude AI Assisted|Claude AI Assisted|96|31
+```
+Look at `ai-credits.txt` I use for my github profile README.md. Look at
+https://github.com/muquit to see how it looks like.
+
 ## Contact Information (contact.txt)
 Contains contact details to be displayed in a Contact section:
 ```
@@ -145,4 +165,4 @@ See LICENSE.txt file for details.
 Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Mar-31-2025</sub>
+<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Apr-03-2025</sub>

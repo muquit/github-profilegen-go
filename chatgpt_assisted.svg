@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 102 31">
+  <!-- designed by Claude AI for me. You are welcome to use it -->
+  <!-- Background -->
+  <rect x="0" y="0" width="102" height="31" rx="6" fill="#F8F9FA" stroke="#D1D5DB" stroke-width="1"/>
+  
+  <!-- ChatGPT Icon (simplified) -->
+  <circle cx="12" cy="15.5" r="9" fill="#10A37F"/>
+  <path d="M12 10.5L8 13V18L12 20.5L16 18V13L12 10.5Z" fill="#10A37F" stroke="white" stroke-width="1"/>
+  <path d="M12 15.5L8 13M12 15.5L12 20.5M12 15.5L16 13" stroke="white" stroke-width="1"/>
+  
+  <!-- Text -->
+  <text x="25" y="18.5" font-family="Arial, sans-serif" font-size="9" font-weight="500" fill="#374151">ChatGPT Assisted</text>
+</svg>

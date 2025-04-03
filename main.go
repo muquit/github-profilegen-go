@@ -1,12 +1,5 @@
 package main
 
-/////////////////////////////////////////////////////////////////////
-// A program to generate simple github profile README.md
-// Developed with Claude AI 3.7 Sonnet, working under my guidance and
-// instructions.
-// muquit@muquit.com Mar-31-2025
-/////////////////////////////////////////////////////////////////////
-
 import (
 	"bufio"
 	"encoding/json"
@@ -19,6 +12,10 @@ import (
 	"strings"
 	"text/template"
 	"time"
+)
+
+const (
+	VERSION = "1.0.2"
 )
 
 // Repository represents a GitHub repository with the fields we're interested in
@@ -39,11 +36,21 @@ type Repository struct {
 	} `json:"source"`
 }
 
+// AICredit holds information about AI assistance for a repository
+type AICredit struct {
+	ImagePath string
+	AltText   string
+	TitleText string
+	Width     string
+	Height    string
+}
+
 // Config holds the program configuration
 type Config struct {
 	Username     string
 	ExcludeFile  string
 	PriorityFile string
+	AICreditFile string
 	OutputFile   string
 }
 
@@ -73,6 +80,36 @@ func loadTextFile(filename string) ([]string, error) {
 	}
 
 	return lines, nil
+}
+
+// loadAICredits loads AI credit information from a file
+func loadAICredits(filename string) (map[string]AICredit, error) {
+	credits := make(map[string]AICredit)
+
+	if filename == "" {
+		return credits, nil
+	}
+
+	lines, err := loadTextFile(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, line := range lines {
+		parts := strings.Split(line, "|")
+		if len(parts) >= 6 {
+			repoName := strings.TrimSpace(parts[0])
+			credits[repoName] = AICredit{
+				ImagePath: strings.TrimSpace(parts[1]),
+				AltText:   strings.TrimSpace(parts[2]),
+				TitleText: strings.TrimSpace(parts[3]),
+				Width:     strings.TrimSpace(parts[4]),
+				Height:    strings.TrimSpace(parts[5]),
+			}
+		}
+	}
+
+	return credits, nil
 }
 
 // fetchRepositories fetches all public repositories for a given username
@@ -142,27 +179,35 @@ func getPriorityIndex(repoName string, priorityList []string) int {
 }
 
 // generateReadme generates a README.md file with repository cards
-func generateReadme(repos []Repository, config Config, contactInfo []string) error {
+func generateReadme(repos []Repository, config Config, contactInfo []string, aiCredits map[string]AICredit) error {
 	// Define the template for repository cards
-	const templateText = `# My Repositories
+	const templateText = `# Repositories
 
 <div style="display: flex; flex-wrap: wrap;">
 
-{{range .Repos}}<!-- Repository: {{.Name}} -->
+{{range .Repos}}<!-- Repository: {{.Repository.Name}} -->
 <div style="border: 1px solid #e1e4e8; border-radius: 6px; padding: 16px; margin: 8px; width: 320px;">
   <h3>
-    📦 <a href="{{.HTMLURL}}">{{.Name}}</a>
+    📦 <a href="{{.Repository.HTMLURL}}">{{.Repository.Name}}</a>
   </h3>
-  <p>{{if .Description}}{{.Description}}{{else}}No description provided{{end}}</p>
+  <p>{{if .Repository.Description}}{{.Repository.Description}}{{else}}No description provided{{end}}</p>
+{{if .AICredit}}
+<a href="#">
+<img src="{{.AICredit.ImagePath}}" alt="{{.AICredit.AltText}}" title="{{.AICredit.TitleText}}" width="{{.AICredit.Width}}" height="{{.AICredit.Height}}">
+</a>
+{{end}}
+
   <p>
-    {{if .Language}}🔵 {{.Language}}{{else}}📄 No language detected{{end}}  
+    {{if .Repository.Language}}🔵 {{.Repository.Language}}{{else}}📄 No language detected{{end}}  
     
-      Created: {{.CreatedAt.Format "Jan 02, 2006"}}  
-      Updated: {{.UpdatedAt.Format "Jan 02, 2006"}}  
-    Published: {{.PushedAt.Format "Jan 02, 2006"}}  
-    {{if .Fork}}🍴 Forked{{if .Source}}{{if .Source.HTMLURL}} from <a href="{{.Source.HTMLURL}}">source</a>{{end}}{{end}}  
-    {{end}}
+      Created: {{.Repository.CreatedAt.Format "Jan 02, 2006"}}  
+      Updated: {{.Repository.UpdatedAt.Format "Jan 02, 2006"}}  
+    Published: {{.Repository.PushedAt.Format "Jan 02, 2006"}}  
   </p>
+
+{{if .Repository.Fork}}🍴 Forked{{if .Repository.Source}}{{if .Repository.Source.HTMLURL}} from <a href="{{.Repository.Source.HTMLURL}}">source</a>{{end}}{{end}}  
+{{end}}
+
 </div>
 {{end}}
 
@@ -179,7 +224,8 @@ func generateReadme(repos []Repository, config Config, contactInfo []string) err
 
 	// Prepare template data
 	type TemplateRepo struct {
-		Repository
+		Repository Repository
+		AICredit   *AICredit
 	}
 
 	type TemplateData struct {
@@ -189,8 +235,14 @@ func generateReadme(repos []Repository, config Config, contactInfo []string) err
 
 	var templateRepos []TemplateRepo
 	for _, repo := range repos {
+		var aiCredit *AICredit
+		if credit, ok := aiCredits[repo.Name]; ok {
+			aiCredit = &credit
+		}
+
 		templateRepos = append(templateRepos, TemplateRepo{
 			Repository: repo,
+			AICredit:   aiCredit,
 		})
 	}
 
@@ -221,13 +273,21 @@ func generateReadme(repos []Repository, config Config, contactInfo []string) err
 }
 
 func main() {
+	var showVersion bool
 	// Parse command-line flags
+	flag.BoolVar(&showVersion, "version", false, "Show version information and exit")
 	username := flag.String("user", "", "GitHub username (required)")
 	excludeFile := flag.String("exclude", "", "Path to exclusion list file")
 	priorityFile := flag.String("priority", "", "Path to priority list file")
 	contactFile := flag.String("contact", "", "Path to contact info file")
+	aiCreditFile := flag.String("ai-credits", "", "Path to AI credits file")
 	outputFile := flag.String("output", "README.md", "Path to output file")
 	flag.Parse()
+
+	if showVersion {
+		fmt.Printf("%s v%s\n", os.Args[0], VERSION)
+		os.Exit(0)
+	}
 
 	if *username == "" {
 		fmt.Println("Error: GitHub username is required")
@@ -240,6 +300,7 @@ func main() {
 		Username:     *username,
 		ExcludeFile:  *excludeFile,
 		PriorityFile: *priorityFile,
+		AICreditFile: *aiCreditFile,
 		OutputFile:   *outputFile,
 	}
 
@@ -254,6 +315,13 @@ func main() {
 	priorityList, err := loadTextFile(config.PriorityFile)
 	if err != nil {
 		fmt.Printf("Error loading priority file: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Load AI credits
+	aiCredits, err := loadAICredits(config.AICreditFile)
+	if err != nil {
+		fmt.Printf("Error loading AI credits file: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -310,7 +378,7 @@ func main() {
 
 	// Generate README
 	fmt.Printf("Generating README to %s...\n", config.OutputFile)
-	if err := generateReadme(filteredRepos, config, contactInfo); err != nil {
+	if err := generateReadme(filteredRepos, config, contactInfo, aiCredits); err != nil {
 		fmt.Printf("Error generating README: %v\n", err)
 		os.Exit(1)
 	}

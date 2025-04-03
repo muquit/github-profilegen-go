@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 92 31">
+  <!-- designed by Claude AI for me. You are welcome to use it -->
+  <!-- Background -->
+  <rect x="0" y="0" width="92" height="31" rx="6" fill="#F8F9FA" stroke="#D1D5DB" stroke-width="1"/>
+  
+  <!-- Gemini Icon (simplified) -->
+  <circle cx="12" cy="15.5" r="9" fill="#8E75B2"/>
+  <path d="M8 17L12 11L16 17L12 20L8 17Z" fill="#8E75B2" stroke="white" stroke-width="1"/>
+  <path d="M12 11V20" stroke="white" stroke-width="1"/>
+  
+  <!-- Text -->
+  <text x="24" y="18.5" font-family="Arial, sans-serif" font-size="9" font-weight="500" fill="#374151">Gemini Assisted</text>
+</svg>

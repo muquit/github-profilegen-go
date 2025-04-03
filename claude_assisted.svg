@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 31">
+  <!-- designed by Claude AI for me. You are welcome to use it -->
+  <!-- Background -->
+  <rect x="0" y="0" width="96" height="31" rx="6" fill="#F8F9FA" stroke="#D1D5DB" stroke-width="1"/>
+  
+  <!-- Claude "C" Symbol -->
+  <circle cx="12" cy="15.5" r="9" fill="#7C3AED"/>
+  <path d="M16 12C14.8 11 13.2 10.5 11.5 10.5C8.5 10.5 6 13 6 16C6 19 8.5 21.5 11.5 21.5C13.2 21.5 14.8 21 16 19.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Text -->
+  <text x="25" y="18.5" font-family="Arial, sans-serif" font-size="9" font-weight="500" fill="#374151">Claude Assisted</text>
+</svg>
