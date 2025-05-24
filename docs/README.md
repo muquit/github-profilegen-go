@@ -1,11 +1,13 @@
 # Introduction
 
-`github-profilegen-go` is a simple multi-platform tool to generate clean, minimal GitHub profile README.md
-for your repositories.
+`github-profilegen-go` is a simple multi-platform tool to generate clean, 
+minimal GitHub profile README.md for your repositories.
 It can be usefull if you want to list all your repositories instead of 
-default pinned 6 repositories.  It does not use badges or anything flashy. 
+default pinned 6 repositories.
 
-Please visit https://github.com/muquit/ to see how it looks like.
+- Please visit https://github.com/muquit/ to see how it looks like.
+- Please vist https://github.com/muquit/muquit/ and look at `Makefile` to
+  see how the [README.md](https://github.com/muquit/muquit/) is generated.
 
 # Features
 - Creates a card-based layout for repositories
@@ -13,7 +15,7 @@ Please visit https://github.com/muquit/ to see how it looks like.
 - Supports priority ordering of repositories
 - Allows excluding specific repositories
 - Includes optional contact information
-- No unnecessary badges or decorations
+- Badges for language, starts, forks, downloads etc.
 
 # Synopsis
 ```
@@ -35,7 +37,7 @@ Usage of ./github-profilegen-go:
 ```
 
 # Version
-The current version is 1.0.2
+The current version is 1.0.3
 
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
@@ -69,22 +71,27 @@ Look at `Makefile` for more info
 In github, create a repository with your username. It is a special repository. Add the
 generated `README.md` in this repo.
 
-Please look at  github document for details:
+- Please look at  github document for details:
 [Managing your profile README](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/customizing-your-profile/managing-your-profile-readme)
+
+- Please vist https://github.com/muquit/muquit/ and look at `Makefile` to
+  see how the [README.md](https://github.com/muquit/muquit/) is generated.
 
 ```bash
 github-profilegen-go -user=yourusername
-github-profilegen-go -user=yourusername -exclude exclude.txt -priority priority.txt -contact contact.txt
+github-profilegen-go -user=yourusername \
+    -exclude exclude.txt \
+    -priority priority.txt \
+    -contact contact.txt
+```
+If your project is generated with AI assistance and wants to give credit, use
+the flag:
+
+```
+    -ai-credits ai-credits.txt
 ```
 
 `README.md` will be created
-
-# Command-line Options
-- `-user`: GitHub username (required)
-- `-exclude`: Path to text file listing repositories to exclude
-- `-priority`: Path to text file listing repositories in preferred display order
-- `-contact`: Path to text file with contact information
-- `-output`: Output file path (defaults to README.md)
 
 # Configuration Files
 
@@ -137,9 +144,12 @@ The generated README will display repository cards with:
 - Publication date
 - Fork status
 
+Look at [README.md](https://github.com/muquit/muquit/) for an example.
+
 # License is MIT
 
 See LICENSE.txt file for details.
 
 # Authors
-Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.
+- Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions. 
+- Updated with Google Gemini AI 2.5 Pro (May-24-2025)

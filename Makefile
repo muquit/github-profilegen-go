@@ -12,7 +12,7 @@ build:
 	echo "*** Compiling ..."
 	go build -o $(BINARY)
 
-build_all:
+build_all: clean
 	echo "*** Cross Compiling ...."
 	go-xbuild-go
 

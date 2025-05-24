@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 84 31"
+   version="1.1"
+   id="svg192"
+   sodipodi:docname="ai_assisted.svg"
+   inkscape:version="1.2.1 (9c6d41e4, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs196" />
+  <sodipodi:namedview
+     id="namedview194"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="7.6129032"
+     inkscape:cx="24.891949"
+     inkscape:cy="15.82839"
+     inkscape:window-width="2098"
+     inkscape:window-height="955"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg192" />
+  <!-- Background -->
+  <rect
+     x="-0.070314057"
+     y="2.1797359"
+     width="72.187241"
+     height="26.640528"
+     rx="5.1562314"
+     fill="#f8f9fa"
+     stroke="#d1d5db"
+     stroke-width="1"
+     id="rect182" />
+  <!-- AI Symbol - Brain with Circuit -->
+  <circle
+     cx="12"
+     cy="15.5"
+     r="9"
+     fill="#6366F1"
+     id="circle184" />
+  <path
+     d="M8 15.5C8 12 11 9.5 15 12C16 14 16 17 15 19C11 21.5 8 19 8 15.5Z"
+     fill="#6366F1"
+     stroke="white"
+     stroke-width="1"
+     id="path186" />
+  <path
+     d="M12 11V20M9 13L15 18M9 18L15 13"
+     stroke="white"
+     stroke-width="1"
+     id="path188" />
+  <!-- Text -->
+  <text
+     x="24"
+     y="18.5"
+     font-family="Arial, sans-serif"
+     font-size="9"
+     font-weight="500"
+     fill="#374151"
+     id="text190">AI Assisted</text>
+</svg>

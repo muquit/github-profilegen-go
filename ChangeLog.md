@@ -1,9 +1,17 @@
 ## Contents
+- [v1.0.3](#v103)
 - [v1.0.2](#v102)
 - [v1.0.1](#v101)
 
+# v1.0.3
+- Updated to create little cleaner README.md with assistance from
+  google Gemini AI 2.5 Pro. Add badges for language, starts, forks, downloads
+  etc.
+  (May-24-2025)
+
 # v1.0.2
-* If any project is AI assisted and if you would like to give credit, specify a file with `-ai-credits ai-credits.txt`.
+* If any project is AI assisted and if you would like to give credit, 
+specify a file with `-ai-credits ai-credits.txt`.
 The formart of the file is:
 ```
 #Format: repository_name|image_path|alt_text|title_text|width|height
