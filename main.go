@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	VERSION = "1.0.3" // Updated version
+	VERSION = "1.0.4" // Updated version
 )
 
 // Octicon SVGs (for embedding)
@@ -31,16 +31,16 @@ type Repository struct {
 	Description string    `json:"description"`
 	Language    string    `json:"language"`
 	Fork        bool      `json:"fork"`
-	CreatedAt   time.Time `json:"created_at"` // <-- Already here
-	UpdatedAt   time.Time `json:"updated_at"` // <-- Already here
-	PushedAt    time.Time `json:"pushed_at"`  // <-- Already here
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	PushedAt    time.Time `json:"pushed_at"`
 	Homepage    string    `json:"homepage"`
 	ForksCount  int       `json:"forks_count"`
 	Stargazers  int       `json:"stargazers_count"`
 	Source      *struct {
 		HTMLURL string `json:"html_url"`
 	} `json:"source"`
-	HasReleases bool // Flag to indicate if releases exist
+	HasReleases bool
 }
 
 // AICredit holds information about AI assistance
@@ -55,6 +55,7 @@ type AICredit struct {
 // Config holds the program configuration
 type Config struct {
 	Username     string
+	Token        string // <-- NEW: GitHub Token
 	ExcludeFile  string
 	PriorityFile string
 	AICreditFile string
@@ -109,8 +110,22 @@ func loadAICredits(filename string) (map[string]AICredit, error) {
 	return credits, nil
 }
 
-// fetchRepositories fetches all public repositories
-func fetchRepositories(username string) ([]Repository, error) {
+// createRequest creates an authenticated HTTP request
+func createRequest(method, url, token string, body io.Reader) (*http.Request, error) {
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "github-profilegen-go/"+VERSION)
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
+	if token != "" {
+		req.Header.Set("Authorization", "token "+token) // <-- Use Token
+	}
+	return req, nil
+}
+
+// fetchRepositories fetches all public repositories using a token
+func fetchRepositories(username, token string) ([]Repository, error) {
 	var allRepos []Repository
 	page := 1
 	perPage := 100
@@ -119,12 +134,10 @@ func fetchRepositories(username string) ([]Repository, error) {
 	for {
 		url := fmt.Sprintf("https://api.github.com/users/%s/repos?page=%d&per_page=%d&sort=pushed", username, page, perPage)
 		fmt.Printf("Fetching: %s\n", url)
-		req, err := http.NewRequest("GET", url, nil)
+		req, err := createRequest("GET", url, token, nil) // <-- Use createRequest
 		if err != nil {
 			return nil, fmt.Errorf("failed to create request: %w", err)
 		}
-		req.Header.Set("User-Agent", "github-profilegen-go/"+VERSION)
-		req.Header.Set("Accept", "application/vnd.github.v3+json")
 		resp, err := client.Do(req)
 		if err != nil {
 			return nil, fmt.Errorf("request failed: %w", err)
@@ -156,26 +169,22 @@ func fetchRepositories(username string) ([]Repository, error) {
 	return allRepos, nil
 }
 
-// checkHasReleases checks if a repository has a latest release
-func checkHasReleases(username, repoName string) (bool, error) {
+// checkHasReleases checks if a repository has a latest release using a token
+func checkHasReleases(username, repoName, token string) (bool, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases/latest", username, repoName)
 	client := &http.Client{Timeout: 5 * time.Second}
 
-	req, err := http.NewRequest("HEAD", url, nil) // Use HEAD for efficiency
+	req, err := createRequest("HEAD", url, token, nil) // <-- Use createRequest
 	if err != nil {
 		return false, fmt.Errorf("failed to create HEAD request for %s: %w", repoName, err)
 	}
-	req.Header.Set("User-Agent", "github-profilegen-go/"+VERSION)
-	req.Header.Set("Accept", "application/vnd.github.v3+json")
 
 	resp, err := client.Do(req)
 	if err != nil {
 		if !strings.Contains(err.Error(), "stopped after 10 redirects") {
 			return false, fmt.Errorf("HEAD request failed for %s: %w", repoName, err)
 		}
-		req, _ = http.NewRequest("GET", url, nil)
-		req.Header.Set("User-Agent", "github-profilegen-go/"+VERSION)
-		req.Header.Set("Accept", "application/vnd.github.v3+json")
+		req, _ = createRequest("GET", url, token, nil) // <-- Use createRequest on fallback
 		resp, err = client.Do(req)
 		if err != nil {
 			return false, fmt.Errorf("GET request failed after HEAD redirect for %s: %w", repoName, err)
@@ -215,9 +224,6 @@ func getPriorityIndex(repoName string, priorityList []string) int {
 
 // generateReadme generates the README file
 func generateReadme(config Config, repos []Repository, contactInfo []string, aiCredits map[string]AICredit) error {
-	//  ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
-	//                TEMPLATE UPDATED WITH DATES AND LANGUAGE
-	//  ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
 	const templateText = `
 ## 📊 My GitHub Stats
 
@@ -327,6 +333,7 @@ func main() {
 	var showVersion bool
 	flag.BoolVar(&showVersion, "version", false, "Show version information and exit")
 	username := flag.String("user", "", "GitHub username (required)")
+	token := flag.String("token", "", "GitHub Personal Access Token (or use GITHUB_TOKEN env var)") // <-- NEW: Token Flag
 	excludeFile := flag.String("exclude", "", "Path to exclusion list file")
 	priorityFile := flag.String("priority", "", "Path to priority list file")
 	contactFile := flag.String("contact", "", "Path to contact info file")
@@ -345,8 +352,21 @@ func main() {
 		os.Exit(1)
 	}
 
+	//  ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+	//                NEW: Get Token from Flag or Environment
+	//  ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+	githubToken := *token
+	if githubToken == "" {
+		githubToken = os.Getenv("GITHUB_TOKEN")
+	}
+	if githubToken == "" {
+		fmt.Println("Warning: No GitHub token provided. Using unauthenticated requests, which have a lower rate limit. Use -token flag or GITHUB_TOKEN env var.")
+	}
+	//  ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
 	config := Config{
 		Username:     *username,
+		Token:        githubToken, // <-- Store Token
 		ExcludeFile:  *excludeFile,
 		PriorityFile: *priorityFile,
 		ContactFile:  *contactFile,
@@ -377,7 +397,7 @@ func main() {
 	}
 
 	fmt.Printf("Fetching repositories for %s...\n", config.Username)
-	repos, err := fetchRepositories(config.Username)
+	repos, err := fetchRepositories(config.Username, config.Token) // <-- Pass Token
 	if err != nil {
 		fmt.Printf("Error fetching repositories: %v\n", err)
 		os.Exit(1)
@@ -396,7 +416,7 @@ func main() {
 	for i := range filteredRepos {
 		repo := &filteredRepos[i]
 		fmt.Printf("  Checking %s... ", repo.Name)
-		has, err := checkHasReleases(config.Username, repo.Name)
+		has, err := checkHasReleases(config.Username, repo.Name, config.Token) // <-- Pass Token
 		if err != nil {
 			fmt.Printf("Warning: Could not check releases for %s: %v\n", repo.Name, err)
 			repo.HasReleases = false
@@ -408,7 +428,9 @@ func main() {
 				fmt.Println("No releases.")
 			}
 		}
-		time.Sleep(200 * time.Millisecond)
+		// You might be able to reduce this sleep or remove it when authenticated,
+		// but it's still good practice to be nice to the API.
+		time.Sleep(50 * time.Millisecond) // Reduced sleep time
 	}
 	fmt.Println("Release check complete.")
 

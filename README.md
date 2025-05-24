@@ -49,6 +49,8 @@ Usage of ./github-profilegen-go:
     	Path to output file (default "README.md")
   -priority string
     	Path to priority list file
+  -token string
+    	GitHub Personal Access Token (or use GITHUB_TOKEN env var)
   -user string
     	GitHub username (required)
   -version
@@ -56,7 +58,7 @@ Usage of ./github-profilegen-go:
 ```
 
 # Version
-The current version is 1.0.3
+The current version is 1.0.4
 
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
@@ -95,6 +97,27 @@ generated `README.md` in this repo.
 
 - Please vist https://github.com/muquit/muquit/ and look at `Makefile` to
   see how the [README.md](https://github.com/muquit/muquit/) is generated.
+
+- To avoid github API rate limit set GITHUB_TOKEN env variable or use the flag
+`-token`
+
+- Linux/macOS:
+```
+export GITHUB_TOKEN="your_personal_access_token_here"
+```
+
+- Windows (Command Prompt)
+
+```
+set GITHUB_TOKEN=your_personal_access_token_here
+go run main.go -user your_github_username
+```
+
+- Windows (PoerShell):
+```
+$env:GITHUB_TOKEN="your_personal_access_token_here"
+go run main.go -user your_github_username
+```    
 
 ```bash
 github-profilegen-go -user=yourusername
