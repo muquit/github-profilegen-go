@@ -1,16 +1,19 @@
 ## Contents
 - [v1.0.4](#v104)
+- [v1.0.3](#v103)
 - [v1.0.2](#v102)
 - [v1.0.1](#v101)
 
 # v1.0.4
-- To avoid gtihup API rate limit, set **GIHUP_TOKEN** or use the flag `-token`
+- To avoid gtihub API rate limit, set **GIHUP_TOKEN** env var or use the flag `-token`
+
   (May-24-2025)
 
 # v1.0.3
 - Updated to create little cleaner README.md with assistance from
   google Gemini AI 2.5 Pro. Add badges for language, starts, forks, downloads
   etc.
+
   (May-24-2025)
 
 # v1.0.2
