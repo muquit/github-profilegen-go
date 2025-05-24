@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	VERSION = "1.0.4" // Updated version
+	VERSION = "1.0.3" // Updated version
 )
 
 // Octicon SVGs (for embedding)
