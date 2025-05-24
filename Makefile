@@ -16,6 +16,10 @@ build_all: clean
 	echo "*** Cross Compiling ...."
 	go-xbuild-go
 
+# release; make sure release_notes.md file is updated
+release:
+	go-xbuild-go -release
+
 doc:
 	echo "*** Generating README.md with TOC ..."
 	chmod 600 $(README)
