@@ -225,9 +225,9 @@ func getPriorityIndex(repoName string, priorityList []string) int {
 // generateReadme generates the README file
 func generateReadme(config Config, repos []Repository, contactInfo []string, aiCredits map[string]AICredit) error {
 	const templateText = `
-## 📊 My GitHub Stats
+## 📊 
 
-## 📦 My Repositories
+## 📦 Repositories
 
 Here are some of the projects I've worked on:
 
@@ -248,7 +248,7 @@ Here are some of the projects I've worked on:
 <img src="https://img.shields.io/github/stars/{{$.Username}}/{{.Repository.Name}}?style=flat-square&label=Stars" alt="Stars" style="vertical-align: middle;"> 
 <img src="https://img.shields.io/github/forks/{{$.Username}}/{{.Repository.Name}}?style=flat-square&label=Forks" alt="Forks" style="vertical-align: middle;"> 
 {{- if .Repository.HasReleases -}}
-<a href="{{.Repository.HTMLURL}}/releases/latest" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/downloads/{{$.Username}}/{{.Repository.Name}}/latest/total?style=flat-square&label=Downloads&color=green" alt="Latest Release Downloads" style="vertical-align: middle;"></a>
+<a href="{{.Repository.HTMLURL}}/releases/latest" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/downloads/{{$.Username}}/{{.Repository.Name}}/total?style=flat-square&label=Downloads&color=green" alt="Latest Release Downloads" style="vertical-align: middle;"></a>
 {{- end -}}
 {{- if .Repository.Fork -}}
 <span style="margin-left: 8px; font-style: italic;">(🍴 Forked)</span>
@@ -268,7 +268,7 @@ Here are some of the projects I've worked on:
 {{end}}
 
 ---
-<p align="right"><small><i>Generated on {{.Timestamp}} with <a href="https://github.com/YOUR_USERNAME/github-profilegen-go">github-profilegen-go</a></i></small></p>
+<p align="right"><small><i>Generated on {{.Timestamp}} with <a href="https://github.com/muquit/github-profilegen-go">github-profilegen-go</a></i></small></p>
 `
 
 	type TemplateRepo struct {
