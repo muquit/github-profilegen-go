@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	htmltemplate "html/template" // Import html/template
@@ -16,8 +17,13 @@ import (
 )
 
 const (
-	VERSION = "1.0.4" // Updated version
+	VERSION = "1.0.7" // Updated version
 )
+
+// errRateLimited is returned when the GitHub API reports the rate limit has
+// been exhausted, so callers can abort instead of silently producing
+// incomplete/incorrect data.
+var errRateLimited = fmt.Errorf("GitHub API rate limit exceeded")
 
 // Octicon SVGs (for embedding)
 const (
@@ -40,7 +46,18 @@ type Repository struct {
 	Source      *struct {
 		HTMLURL string `json:"html_url"`
 	} `json:"source"`
-	HasReleases bool
+	HasReleases    bool
+	TotalDownloads int
+}
+
+// releaseAsset represents a single asset attached to a GitHub release
+type releaseAsset struct {
+	DownloadCount int `json:"download_count"`
+}
+
+// release represents a GitHub release, used to total up asset download counts
+type release struct {
+	Assets []releaseAsset `json:"assets"`
 }
 
 // AICredit holds information about AI assistance
@@ -169,37 +186,64 @@ func fetchRepositories(username, token string) ([]Repository, error) {
 	return allRepos, nil
 }
 
-// checkHasReleases checks if a repository has a latest release using a token
-func checkHasReleases(username, repoName, token string) (bool, error) {
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases/latest", username, repoName)
-	client := &http.Client{Timeout: 5 * time.Second}
+// fetchLatestRelease checks if a repository has any releases and, if so,
+// totals the download counts of all assets across all releases (matching
+// what shields.io's github/downloads/.../total badge reports), using a token
+func fetchLatestRelease(username, repoName, token string) (bool, int, error) {
+	client := &http.Client{Timeout: 10 * time.Second}
+	total := 0
+	hasReleases := false
+	page := 1
+	perPage := 100
 
-	req, err := createRequest("HEAD", url, token, nil) // <-- Use createRequest
-	if err != nil {
-		return false, fmt.Errorf("failed to create HEAD request for %s: %w", repoName, err)
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		if !strings.Contains(err.Error(), "stopped after 10 redirects") {
-			return false, fmt.Errorf("HEAD request failed for %s: %w", repoName, err)
-		}
-		req, _ = createRequest("GET", url, token, nil) // <-- Use createRequest on fallback
-		resp, err = client.Do(req)
+	for {
+		url := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases?page=%d&per_page=%d", username, repoName, page, perPage)
+		req, err := createRequest("GET", url, token, nil)
 		if err != nil {
-			return false, fmt.Errorf("GET request failed after HEAD redirect for %s: %w", repoName, err)
+			return false, 0, fmt.Errorf("failed to create request for %s: %w", repoName, err)
 		}
-	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode == http.StatusOK {
-		return true, nil
-	}
-	if resp.StatusCode == http.StatusNotFound {
-		return false, nil
+		resp, err := client.Do(req)
+		if err != nil {
+			return false, 0, fmt.Errorf("request failed for %s: %w", repoName, err)
+		}
+
+		if resp.StatusCode == http.StatusNotFound {
+			resp.Body.Close()
+			return false, 0, nil
+		}
+		if (resp.StatusCode == http.StatusForbidden || resp.StatusCode == http.StatusTooManyRequests) && resp.Header.Get("X-RateLimit-Remaining") == "0" {
+			resp.Body.Close()
+			return false, 0, fmt.Errorf("%w (repo: %s)", errRateLimited, repoName)
+		}
+		if resp.StatusCode != http.StatusOK {
+			resp.Body.Close()
+			return false, 0, fmt.Errorf("unexpected status code %d for %s", resp.StatusCode, repoName)
+		}
+
+		var releases []release
+		if err := json.NewDecoder(resp.Body).Decode(&releases); err != nil {
+			resp.Body.Close()
+			return false, 0, fmt.Errorf("failed to decode releases response for %s: %w", repoName, err)
+		}
+		resp.Body.Close()
+
+		if len(releases) == 0 {
+			break
+		}
+		hasReleases = true
+		for _, rel := range releases {
+			for _, asset := range rel.Assets {
+				total += asset.DownloadCount
+			}
+		}
+		if len(releases) < perPage {
+			break
+		}
+		page++
 	}
 
-	return false, fmt.Errorf("unexpected status code %d for %s", resp.StatusCode, repoName)
+	return hasReleases, total, nil
 }
 
 // shouldExcludeRepo checks if a repository should be excluded
@@ -245,10 +289,10 @@ Here are some of the projects I've worked on:
 {{- else -}}
 <img src="https://img.shields.io/badge/Language-N/A-grey?style=flat-square" alt="Language: N/A" style="vertical-align: middle;">
 {{- end -}}
-<img src="https://img.shields.io/github/stars/{{$.Username}}/{{.Repository.Name}}?style=flat-square&label=Stars" alt="Stars" style="vertical-align: middle;"> 
-<img src="https://img.shields.io/github/forks/{{$.Username}}/{{.Repository.Name}}?style=flat-square&label=Forks" alt="Forks" style="vertical-align: middle;"> 
+<img src="https://img.shields.io/badge/Stars-{{.Repository.Stargazers}}-blue?style=flat-square" alt="Stars" style="vertical-align: middle;">
+<img src="https://img.shields.io/badge/Forks-{{.Repository.ForksCount}}-blue?style=flat-square" alt="Forks" style="vertical-align: middle;">
 {{- if .Repository.HasReleases -}}
-<a href="{{.Repository.HTMLURL}}/releases/latest" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/downloads/{{$.Username}}/{{.Repository.Name}}/total?style=flat-square&label=Downloads&color=green" alt="Latest Release Downloads" style="vertical-align: middle;"></a>
+<a href="{{.Repository.HTMLURL}}/releases/latest" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Downloads-{{.Repository.TotalDownloads}}-green?style=flat-square" alt="Latest Release Downloads" style="vertical-align: middle;"></a>
 {{- end -}}
 {{- if .Repository.Fork -}}
 <span style="margin-left: 8px; font-style: italic;">(🍴 Forked)</span>
@@ -268,7 +312,7 @@ Here are some of the projects I've worked on:
 {{end}}
 
 ---
-<p align="right"><small><i>Generated on {{.Timestamp}} with <a href="https://github.com/muquit/github-profilegen-go">github-profilegen-go</a></i></small></p>
+<p align="right"><small><i>Generated on {{.Timestamp}}</p>
 `
 
 	type TemplateRepo struct {
@@ -416,12 +460,18 @@ func main() {
 	for i := range filteredRepos {
 		repo := &filteredRepos[i]
 		fmt.Printf("  Checking %s... ", repo.Name)
-		has, err := checkHasReleases(config.Username, repo.Name, config.Token) // <-- Pass Token
+		has, downloads, err := fetchLatestRelease(config.Username, repo.Name, config.Token)
 		if err != nil {
+			if errors.Is(err, errRateLimited) {
+				fmt.Printf("\nError: %v\n", err)
+				fmt.Println("Aborting: refusing to generate a README with incomplete release/download data. Re-run with -token or GITHUB_TOKEN set to a valid GitHub token.")
+				os.Exit(1)
+			}
 			fmt.Printf("Warning: Could not check releases for %s: %v\n", repo.Name, err)
 			repo.HasReleases = false
 		} else {
 			repo.HasReleases = has
+			repo.TotalDownloads = downloads
 			if has {
 				fmt.Println("Found releases.")
 			} else {
