@@ -1,6 +1,6 @@
 # Introduction
 
-`github-profilegen-go` is a simple multi-platform tool to generate clean, 
+`github-profilegen-go` is a simple cross-platform tool to generate clean, 
 minimal GitHub profile README.md for your repositories.
 It can be usefull if you want to list all your repositories instead of 
 default pinned 6 repositories.
@@ -38,8 +38,8 @@ Usage of ./github-profilegen-go:
     	Show version information and exit
 ```
 
-# Version
-The current version is 1.0.4
+# Latest Version (v1.0.5)
+The current version is 1.0.5
 
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
@@ -52,7 +52,9 @@ Install [go](https://go.dev/) first
 go install github.com/yourusername/github-profilegen-go@latest
 ```
 
-## Download
+@[:markdown](brew_install.md)
+
+## Download pre-compiled binaries
 
 Download pre-compiled binaries for various platforms from
 [Releases](https://github.com/muquit/github-profilegen-go/releases) page
@@ -63,7 +65,7 @@ Install [go](https://go.dev/) first
 ```bash
 git clone https://github.com/yourusername/github-profilegen-go.git
 cd github-profilegen-go
-go build
+go build .
 ```
 
 Look at `Makefile` for more info
@@ -174,5 +176,7 @@ Look at [README.md](https://github.com/muquit/muquit/) for an example.
 See LICENSE.txt file for details.
 
 # Authors
-- Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions. 
+- Developed with help rom Claude AI 3.7 Sonnet
 - Updated with Google Gemini AI 2.5 Pro (May-24-2025)
+- [Claude Code](https://code.claude.com/docs/en/overview) added support for
+static badges for Stars/Forks/Downloads to avoid shields.io rate-limit errors.

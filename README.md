@@ -1,11 +1,16 @@
-## Table Of Contents
+# Table Of Contents
 - [Introduction](#introduction)
 - [Features](#features)
 - [Synopsis](#synopsis)
-- [Version](#version)
+- [Latest Version (v1.0.5)](#latest-version-v105)
 - [Installation](#installation)
   - [Install from github](#install-from-github)
-  - [Download](#download)
+  - [Installing using Homebrew on Mac/Linux](#installing-using-homebrew-on-maclinux)
+    - [Install](#install)
+    - [Upgrade](#upgrade)
+    - [Uninstall](#uninstall)
+    - [Remove the tap](#remove-the-tap)
+  - [Download pre-compiled binaries](#download-pre-compiled-binaries)
   - [Building from source](#building-from-source)
 - [Usage](#usage)
 - [Configuration Files](#configuration-files)
@@ -19,7 +24,7 @@
 
 # Introduction
 
-`github-profilegen-go` is a simple multi-platform tool to generate clean, 
+`github-profilegen-go` is a simple cross-platform tool to generate clean, 
 minimal GitHub profile README.md for your repositories.
 It can be usefull if you want to list all your repositories instead of 
 default pinned 6 repositories.
@@ -57,8 +62,8 @@ Usage of ./github-profilegen-go:
     	Show version information and exit
 ```
 
-# Version
-The current version is 1.0.4
+# Latest Version (v1.0.5)
+The current version is 1.0.5
 
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
@@ -71,7 +76,45 @@ Install [go](https://go.dev/) first
 go install github.com/yourusername/github-profilegen-go@latest
 ```
 
-## Download
+## Installing using Homebrew on Mac/Linux
+
+You will need to install [Homebrew](https://brew.sh/) first.
+
+### Install
+
+First install the custom tap, then trust it. Homebrew 6.0+ refuses to load
+formulae from third-party taps until they are explicitly trusted.
+
+```
+brew tap muquit/github-profilegen-go https://github.com/muquit/github-profilegen-go.git
+brew trust muquit/github-profilegen-go
+brew install github-profilegen-go
+```
+
+Or tap, trust and install in one go:
+```
+brew tap muquit/github-profilegen-go https://github.com/muquit/github-profilegen-go.git
+brew trust muquit/github-profilegen-go
+brew install muquit/github-profilegen-go/github-profilegen-go
+```
+
+### Upgrade
+```
+brew upgrade github-profilegen-go
+```
+
+### Uninstall
+```
+brew uninstall github-profilegen-go
+```
+
+### Remove the tap
+```
+brew untap muquit/github-profilegen-go
+```
+
+
+## Download pre-compiled binaries
 
 Download pre-compiled binaries for various platforms from
 [Releases](https://github.com/muquit/github-profilegen-go/releases) page
@@ -82,7 +125,7 @@ Install [go](https://go.dev/) first
 ```bash
 git clone https://github.com/yourusername/github-profilegen-go.git
 cd github-profilegen-go
-go build
+go build .
 ```
 
 Look at `Makefile` for more info
@@ -193,8 +236,10 @@ Look at [README.md](https://github.com/muquit/muquit/) for an example.
 See LICENSE.txt file for details.
 
 # Authors
-- Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions. 
+- Developed with help rom Claude AI 3.7 Sonnet
 - Updated with Google Gemini AI 2.5 Pro (May-24-2025)
+- [Claude Code](https://code.claude.com/docs/en/overview) added support for
+static badges for Stars/Forks/Downloads to avoid shields.io rate-limit errors.
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on May-25-2025</sub>
+<sub>TOC/glossary expansion by https://github.com/muquit/markdown-toc-go v1.0.5 on Jun-22-2026</sub>

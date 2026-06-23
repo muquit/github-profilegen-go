@@ -127,6 +127,22 @@ func loadAICredits(filename string) (map[string]AICredit, error) {
 	return credits, nil
 }
 
+// formatWithCommas formats an integer with thousands separators, e.g. 1234567 -> "1,234,567"
+func formatWithCommas(n int) string {
+	s := fmt.Sprintf("%d", n)
+	neg := strings.HasPrefix(s, "-")
+	if neg {
+		s = s[1:]
+	}
+	for i := len(s) - 3; i > 0; i -= 3 {
+		s = s[:i] + "," + s[i:]
+	}
+	if neg {
+		s = "-" + s
+	}
+	return s
+}
+
 // createRequest creates an authenticated HTTP request
 func createRequest(method, url, token string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, body)
@@ -289,10 +305,10 @@ Here are some of the projects I've worked on:
 {{- else -}}
 <img src="https://img.shields.io/badge/Language-N/A-grey?style=flat-square" alt="Language: N/A" style="vertical-align: middle;">
 {{- end -}}
-<img src="https://img.shields.io/badge/Stars-{{.Repository.Stargazers}}-blue?style=flat-square" alt="Stars" style="vertical-align: middle;">
-<img src="https://img.shields.io/badge/Forks-{{.Repository.ForksCount}}-blue?style=flat-square" alt="Forks" style="vertical-align: middle;">
+<img src="https://img.shields.io/badge/Stars-{{commas .Repository.Stargazers}}-blue?style=flat-square" alt="Stars" style="vertical-align: middle;">
+<img src="https://img.shields.io/badge/Forks-{{commas .Repository.ForksCount}}-blue?style=flat-square" alt="Forks" style="vertical-align: middle;">
 {{- if .Repository.HasReleases -}}
-<a href="{{.Repository.HTMLURL}}/releases/latest" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Downloads-{{.Repository.TotalDownloads}}-green?style=flat-square" alt="Latest Release Downloads" style="vertical-align: middle;"></a>
+<a href="{{.Repository.HTMLURL}}/releases/latest" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Downloads-{{commas .Repository.TotalDownloads}}-green?style=flat-square" alt="Latest Release Downloads" style="vertical-align: middle;"></a>
 {{- end -}}
 {{- if .Repository.Fork -}}
 <span style="margin-left: 8px; font-style: italic;">(🍴 Forked)</span>
@@ -349,7 +365,8 @@ Here are some of the projects I've worked on:
 	}
 
 	funcMap := template.FuncMap{
-		"lower": strings.ToLower,
+		"lower":  strings.ToLower,
+		"commas": formatWithCommas,
 		"rawHTML": func(s string) htmltemplate.HTML {
 			return htmltemplate.HTML(s)
 		},
