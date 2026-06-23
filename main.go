@@ -16,9 +16,7 @@ import (
 	"time"
 )
 
-const (
-	VERSION = "1.0.7" // Updated version
-)
+var version = "dev" // overridden at build time via -ldflags
 
 // errRateLimited is returned when the GitHub API reports the rate limit has
 // been exhausted, so callers can abort instead of silently producing
@@ -149,7 +147,7 @@ func createRequest(method, url, token string, body io.Reader) (*http.Request, er
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("User-Agent", "github-profilegen-go/"+VERSION)
+	req.Header.Set("User-Agent", "github-profilegen-go/" +version)
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
 	if token != "" {
 		req.Header.Set("Authorization", "token "+token) // <-- Use Token
@@ -289,7 +287,7 @@ func generateReadme(config Config, repos []Repository, contactInfo []string, aiC
 
 ## 📦 Repositories
 
-Here are some of the projects I've worked on:
+Here are some of the projects I've worked on. Note: all the badge counts are statically generated (as of {{.Timestamp}}) because live shields.io badges were rate-limited, and require periodic regeneration.
 
 {{range $index, $repo := .Repos}}
 {{if $index}}
@@ -403,7 +401,7 @@ func main() {
 	flag.Parse()
 
 	if showVersion {
-		fmt.Printf("github-profilegen-go v%s\n", VERSION)
+		fmt.Printf("github-profilegen-go %s\n", version)
 		os.Exit(0)
 	}
 
