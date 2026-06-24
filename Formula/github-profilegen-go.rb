@@ -5,20 +5,20 @@
 class GithubProfilegenGo < Formula
   desc ""
   homepage "https://github.com/muquit/github-profilegen-go"
-  version "1.0.5"
+  version "1.0.6"
 
   if OS.mac? && Hardware::CPU.arm?
-    url "https://github.com/muquit/github-profilegen-go/releases/download/v1.0.5/github-profilegen-go-v1.0.5-darwin-arm64.d.tar.gz"
-    sha256 "31b79901f504ebd80f9a0a879b38306a2f1ac5eec24a7a8acb4a17febeec35ab"
+    url "https://github.com/muquit/github-profilegen-go/releases/download/v1.0.6/github-profilegen-go-v1.0.6-darwin-arm64.d.tar.gz"
+    sha256 "4e543ff90f08f9012c7370a078dd9bd3448e0af6ebfb635c46ad3e3bc84ccfba"
   elsif OS.mac? && Hardware::CPU.intel?
-    url "https://github.com/muquit/github-profilegen-go/releases/download/v1.0.5/github-profilegen-go-v1.0.5-darwin-amd64.d.tar.gz"
-    sha256 "1ec97798894b948fc14b906768453438f5b187f694db2714a2de1ce20a15ec4c"
+    url "https://github.com/muquit/github-profilegen-go/releases/download/v1.0.6/github-profilegen-go-v1.0.6-darwin-amd64.d.tar.gz"
+    sha256 "c09f4f1eabe6e279384376027d323c6def53d1853fab8faaafe194c9eb619922"
   elsif OS.linux? && Hardware::CPU.intel?
-    url "https://github.com/muquit/github-profilegen-go/releases/download/v1.0.5/github-profilegen-go-v1.0.5-linux-amd64.d.tar.gz"
-    sha256 "08f8e01eef367d98da970a2237227ee119e5ce9888237ba5b99cb0a89b68cb92"
+    url "https://github.com/muquit/github-profilegen-go/releases/download/v1.0.6/github-profilegen-go-v1.0.6-linux-amd64.d.tar.gz"
+    sha256 "f14a32a87c2926e2de70bda9f8c1f40bb98dc430f61b530e98a069bf2b805469"
   elsif OS.linux? && Hardware::CPU.arm?
-    url "https://github.com/muquit/github-profilegen-go/releases/download/v1.0.5/github-profilegen-go-v1.0.5-linux-arm64.d.tar.gz"
-    sha256 "03bfdaa26966375c8e95c8ef74872ed4a35084e91a1f679352b3351f8fede786"
+    url "https://github.com/muquit/github-profilegen-go/releases/download/v1.0.6/github-profilegen-go-v1.0.6-linux-arm64.d.tar.gz"
+    sha256 "71ea982e0d6a1cc55d3e7e7e18c191aded95552dec524ef44dc2dd53d047026d"
   end
 
   def install

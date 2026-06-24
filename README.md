@@ -242,4 +242,4 @@ See LICENSE.txt file for details.
 static badges for Stars/Forks/Downloads to avoid shields.io rate-limit errors.
 
 ---
-<sub>TOC/glossary expansion by https://github.com/muquit/markdown-toc-go v1.0.5 on Jun-22-2026</sub>
+<sub>TOC/glossary expansion by https://github.com/muquit/markdown-toc-go v1.0.5 on Jun-23-2026</sub>

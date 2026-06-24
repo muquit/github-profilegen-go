@@ -291,6 +291,8 @@ Here are some of the projects I've worked on. Note: all the badge counts are sta
 
 **Generated on:** {{.Timestamp}}
 
+**Generated with:** [github-profilegen-go]({{.RepoURL}}) {{.Version}}
+
 {{range $index, $repo := .Repos}}
 {{if $index}}
 <hr>
@@ -342,6 +344,8 @@ Here are some of the projects I've worked on. Note: all the badge counts are sta
 		ContactInfo []string
 		Timestamp   string
 		RepoIconSVG string
+		RepoURL     string
+		Version     string
 	}
 
 	var templateRepos []TemplateRepo
@@ -362,6 +366,8 @@ Here are some of the projects I've worked on. Note: all the badge counts are sta
 		ContactInfo: contactInfo,
 		Timestamp:   time.Now().Format(time.RFC1123),
 		RepoIconSVG: RepoIconSVG,
+		RepoURL:     "https://github.com/muquit/github-profilegen-go",
+		Version:     version,
 	}
 
 	funcMap := template.FuncMap{
