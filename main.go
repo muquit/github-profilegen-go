@@ -287,7 +287,9 @@ func generateReadme(config Config, repos []Repository, contactInfo []string, aiC
 
 ## 📦 Repositories
 
-Here are some of the projects I've worked on. Note: all the badge counts are statically generated (as of {{.Timestamp}}) because live shields.io badges were rate-limited, and require periodic regeneration.
+Here are some of the projects I've worked on. Note: all the badge counts are statically generated because live shields.io badges were rate-limited, and require periodic regeneration.
+
+**Generated on:** {{.Timestamp}}
 
 {{range $index, $repo := .Repos}}
 {{if $index}}
